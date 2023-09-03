@@ -1,0 +1,3 @@
+[submodule "adrc_esp32/lib/Adafruit_VL53L1X"]
+	path = adrc_esp32/lib/Adafruit_VL53L1X
+	url = https://github.com/adafruit/Adafruit_VL53L1X
