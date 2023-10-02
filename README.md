@@ -19,3 +19,7 @@ Auto Drive RC: 自動運転ラジコン2023のリポジトリ
 ```bash
 docker run -it --rm -v /dev:/dev -v /dev/shm:/dev/shm --privileged --net=host microros/micro-ros-agent:foxy serial --dev /dev/ttyTHS0 
 ```
+
+```bash
+docker run -it --rm -v /dev:/dev -v /dev/shm:/dev/shm --privileged --net=host nvidiajetson/deepstream-ros2-foxy:5.0.1 
+```
