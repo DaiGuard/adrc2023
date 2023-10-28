@@ -42,7 +42,7 @@ class DataCapture(Node):
         launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=2 num-surfaces-per-frame=1 "
         launch_str+= "! nvmultistreamtiler columns=1 rows=2 width=1280 height=1440 "
         launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! tee name=t ! queue ! fakesink name=sink sync=false "
-        launch_str+= "t.src_1 ! queue ! nvvidconv ! video/x-raw,width=640,height=720 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.3.9 port=8554 sync=false"
+        launch_str+= "t.src_1 ! queue ! nvvidconv ! video/x-raw,width=640,height=720 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.3.103 port=8554 sync=false"
         self.pipeline = Gst.parse_launch(launch_str)
         if not self.pipeline:
             raise RuntimeError('unable to create pipeline')
@@ -111,6 +111,8 @@ class DataCapture(Node):
         for param in params:
             if param.name == 'timespan':
                 self.timespan = param.value
+            elif param.name == 'path':
+                self.path = param.value
 
         return SetParametersResult(successful=True)
     
@@ -138,8 +140,7 @@ class DataCapture(Node):
             response.message = "record end"
 
         return response
-
-
+    
     def bus_call(self, bus, message, loop):
         """パイプラインバスコール
 
@@ -218,4 +219,6 @@ class DataCapture(Node):
             # self.loop.run()
         except:
             pass
+
         self.pipeline.set_state(Gst.State.NULL)
+        self.file.close()

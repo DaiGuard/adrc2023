@@ -60,12 +60,12 @@ install(TARGETS
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
+  # INCLUDES DESTINATION include
 )
-install(DIRECTORY include/ DESTINATION include)
-install(DIRECTORY icons
-  DESTINATION share/${PROJECT_NAME}
-)
+# install(DIRECTORY include/ DESTINATION include)
+#install(DIRECTORY icons
+#  DESTINATION share/${PROJECT_NAME}
+#)
 
 ament_export_libraries(
   ${PROJECT_NAME}

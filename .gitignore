@@ -9,3 +9,5 @@ adrc_esp32/.vscode/ipch
 adrc_ws/build/
 adrc_ws/install/
 adrc_ws/log/
+
+data/

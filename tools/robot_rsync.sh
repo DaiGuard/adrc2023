@@ -1,6 +1,15 @@
 #! /bin/env bash
 
 if [ $# -gt 0 ]; then
+
+    if [ $1 == "-h" ]; then
+        echo -e "Usage:"
+        echo -e "  ./robot_sync.sh OPTIONS"
+        echo -e ""
+        echo -e "  OPTIONS: esp32,ros,data"
+        exit
+    fi
+
     MODE=$1
 else
     MODE="esp32,ros,scripts,data"
@@ -44,8 +53,8 @@ fi
 if [[ "$MODE" == *data* ]]; then
     echo -e "\e[34msynchronize Data directory \e[m"
     # データのダウンロード
-    rsync -rv --exclude=".git" --exclude=".vscode" --delete \
-        $USERNAME@$TARGETNAME:$TARGETDIR\data
+    rsync -rv --exclude=".git" --exclude=".vscode" \
+        $USERNAME@$TARGETNAME:$TARGETDIR/adrc_ws/data \
         $WORKDIR/
 fi
 
