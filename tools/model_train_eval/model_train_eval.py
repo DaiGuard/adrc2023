@@ -1,3 +1,5 @@
+import argparse
+
 import os
 import sys
 
@@ -13,31 +15,42 @@ import cv2
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description='model train and eval')
+    parser.add_argument('--input', '-i', type=str)
+    parser.add_argument('--output', '-o', required=True, type=str)
+    parser.add_argument('--data', '-d', action='append', required=True, type=str)
+    parser.add_argument('--epoch', '-e', default=100, type=int)
+    parser.add_argument('--batch', '-b', default=8, type=int)
+    args = parser.parse_args()
+
     device = torch.device('cuda')
-    model = torchvision.models.resnet18(pretrained=False)
-    model.fc = torch.nn.Linear(512, 2)
+    model = None
+    if not args.input:
+        model = torchvision.models.resnet18(pretrained=False)
+        model.fc = torch.nn.Linear(512, 2)
+    else:
+        model = torch.load(args.input)
     model = model.to(device)
 
     TRANSFORMS = transforms.Compose([
+        transforms.ToPILImage(),
         transforms.ColorJitter(0.2, 0.2, 0.2, 0.2),
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
 
-    # 引数取得
-    args = sys.argv 
+    # トレーニング
+    model = model.train()
+    optimizer = torch.optim.Adam(model.parameters())
 
     # 初期の値を取得
-    dataset = XYDataset(args[1], TRANSFORMS)
-    epoch = int(args[2])
-    optimizer = torch.optim.Adam(model.parameters())
-    batch_size = int(args[3])
+    dataset = XYDataset(args.data, TRANSFORMS)
+    epoch = args.epoch    
+    batch_size = args.batch
 
     train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)    
 
-    # トレーニング
-    model = model.train()
     while epoch > 0:
         count = 0
         sum_loss = 0.0
@@ -99,7 +112,7 @@ if __name__ == '__main__':
         key = cv2.waitKey(30)
         print(key)
         if key == 115:
-            torch.save(model, 'model_weight.pth')
+            torch.save(model, args.output)
             break
         elif key == 113:
             break

@@ -9,20 +9,21 @@ import PIL.Image
 
 class XYDataset(Dataset):
 
-    def __init__(self, path, transform=None):
+    def __init__(self, paths, transform=None):
         self.categories = ['throttle', 'steering']
         self.transform = transform
 
-        data_file = os.path.join(path, 'data.csv')
         dataset = []
-        with open(data_file, 'r') as f:
-            for line in f:
-                d = line.replace(' ', '').split(',')
-                dataset.append({
-                    'file': os.path.join(path, d[0]),
-                    'throttle': float(d[1]), 
-                    'steering': float(d[2])
-                    })
+        for path in paths:
+            data_file = os.path.join(path, 'data.csv')            
+            with open(data_file, 'r') as f:
+                for line in f:
+                    d = line.replace(' ', '').split(',')
+                    dataset.append({
+                        'file': os.path.join(path, d[0]),
+                        'throttle': float(d[1]), 
+                        'steering': float(d[2])
+                        })
 
         self.dataset = dataset
 
@@ -36,7 +37,6 @@ class XYDataset(Dataset):
         steering = self.dataset[index]['steering']
         
         image = cv2.imread(image_path)
-        image = PIL.Image.fromarray(image)
 
         if self.transform:
             image = self.transform(image)
