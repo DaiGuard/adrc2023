@@ -163,12 +163,12 @@ class LiveRun(Node):
             self.preview_img_pub.publish(imgmsg)
 
             cmd_vel = Twist()
-            cmd_vel.linear.x = output[0][0]
+            cmd_vel.linear.x = float(output[0][0])
             cmd_vel.linear.y = 0.0
             cmd_vel.linear.z = 0.0
             cmd_vel.angular.x = 0.0
             cmd_vel.angular.y = 0.0
-            cmd_vel.angular.z = output[0][1]
+            cmd_vel.angular.z = float(output[0][1])
             self.cmdvel_pub.publish(cmd_vel)
 
             try:
