@@ -10,4 +10,5 @@ adrc_ws/build/
 adrc_ws/install/
 adrc_ws/log/
 
-data/
+data/*
+!data/.gitkeep
