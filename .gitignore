@@ -1,4 +1,5 @@
 .vscode/
+__pycache__/
 
 adrc_esp32/.pio
 adrc_esp32/.vscode/.browse.c_cpp.db*

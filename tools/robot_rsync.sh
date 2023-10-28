@@ -12,7 +12,7 @@ if [ $# -gt 0 ]; then
 
     MODE=$1
 else
-    MODE="esp32,ros,scripts,data"
+    MODE="esp32,ros,scripts,data,models,tools"
 fi
 
 # 環境設定
@@ -48,6 +48,22 @@ if [[ "$MODE" == *scripts* ]]; then
     rsync -rv --exclude=".git" --exclude=".vscode" --delete \
         $WORKDIR/scripts \
         $USERNAME@$TARGETNAME:$TARGETDIR
+fi
+
+if [[ "$MODE" == *tools* ]]; then
+    echo -e "\e[34msynchronize Tool directory \e[m"
+    # スクリプトのアップロード
+    rsync -rv --exclude=".git" --exclude=".vscode" --exclude="__pycache__" --delete \
+        $WORKDIR/tools \
+        $USERNAME@$TARGETNAME:$TARGETDIR/adrc_ws
+fi
+
+if [[ "$MODE" == *models* ]]; then
+    echo -e "\e[34msynchronize Model directory \e[m"
+    # スクリプトのアップロード
+    rsync -rv --exclude=".git" --exclude=".vscode" --delete \
+        $WORKDIR/models \
+        $USERNAME@$TARGETNAME:$TARGETDIR/adrc_ws
 fi
 
 if [[ "$MODE" == *data* ]]; then
