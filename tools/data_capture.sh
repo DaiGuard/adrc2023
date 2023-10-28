@@ -1,6 +1,6 @@
 #! /bin/env bash
 
-if [ $# -ne 1 ]; then
+if [[ $# < 1 ]]; then
     echo -e "Usage:"
     echo -e "  ./data_capture.sh MODE"
     echo -e ""
