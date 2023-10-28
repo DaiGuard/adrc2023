@@ -1,0 +1,7 @@
+<library path="data_capture_plugin">
+    <class name="data_capture_rviz_plugin/DataCapturePanel" type="data_capture_rviz_plugin::DataCapturePanel" base_class_type="rviz_common::Panel">
+        <description>
+            data capture panel plugin
+        </description>
+    </class>
+</library>

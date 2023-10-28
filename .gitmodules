@@ -1,3 +1,6 @@
 [submodule "adrc_esp32"]
 	path = adrc_esp32
 	url = https://github.com/DaiGuard/adrc_esp32
+[submodule "adrc_ws/src/vision_opencv"]
+	path = adrc_ws/src/vision_opencv
+	url = https://github.com/ros-perception/vision_opencv.git

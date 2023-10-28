@@ -3,7 +3,7 @@
 if [ $# -gt 0 ]; then
     MODE=$1
 else
-    MODE="esp32,ros,scripts"
+    MODE="esp32,ros,scripts,data"
 fi
 
 # 環境設定
@@ -30,6 +30,7 @@ if [[ "$MODE" == *ros* ]]; then
     rsync -rv --exclude=".git" --exclude=".vscode" --delete \
         $WORKDIR/adrc_ws/src \
         $USERNAME@$TARGETNAME:$TARGETDIR/adrc_ws/
+    ssh $USERNAME@$TARGETNAME "cd $TARGETDIR/adrc_ws/ && source /opt/ros/foxy/setup.bash && colcon build --symlink-install"
 fi
 
 if [[ "$MODE" == *scripts* ]]; then
@@ -40,5 +41,12 @@ if [[ "$MODE" == *scripts* ]]; then
         $USERNAME@$TARGETNAME:$TARGETDIR
 fi
 
+if [[ "$MODE" == *data* ]]; then
+    echo -e "\e[34msynchronize Data directory \e[m"
+    # データのダウンロード
+    rsync -rv --exclude=".git" --exclude=".vscode" --delete \
+        $USERNAME@$TARGETNAME:$TARGETDIR\data
+        $WORKDIR/
+fi
 
 

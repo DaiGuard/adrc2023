@@ -1,5 +1,11 @@
+.vscode/
+
 adrc_esp32/.pio
 adrc_esp32/.vscode/.browse.c_cpp.db*
 adrc_esp32/.vscode/c_cpp_properties.json
 adrc_esp32/.vscode/launch.json
 adrc_esp32/.vscode/ipch
+
+adrc_ws/build/
+adrc_ws/install/
+adrc_ws/log/
