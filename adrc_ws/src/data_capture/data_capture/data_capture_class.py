@@ -41,8 +41,9 @@ class DataCapture(Node):
         launch_str+= "nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! nvvideoconvert flip-method=rotate-180 ! m.sink_1 "
         launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=2 num-surfaces-per-frame=1 "
         launch_str+= "! nvmultistreamtiler columns=1 rows=2 width=1280 height=1440 "
-        launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! tee name=t ! queue ! fakesink name=sink sync=false "
-        launch_str+= "t.src_1 ! queue ! nvvidconv ! video/x-raw,width=640,height=720 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.3.103 port=8554 sync=false"
+        launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! fakesink name=sink sync=false "
+        #launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! tee name=t ! queue ! fakesink name=sink sync=false "
+        # launch_str+= "t.src_1 ! queue ! nvvidconv ! video/x-raw,width=640,height=720 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.3.103 port=8554 sync=false"
         self.pipeline = Gst.parse_launch(launch_str)
         if not self.pipeline:
             raise RuntimeError('unable to create pipeline')
@@ -58,9 +59,9 @@ class DataCapture(Node):
 
         # Gstreamerバス状態の監視
         self.loop = GObject.MainLoop()
-        self.bus = self.pipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect('message', self.bus_call, self.loop)
+        # self.bus = self.pipeline.get_bus()
+        # self.bus.add_signal_watch()
+        # self.bus.connect('message', self.bus_call, self.loop)
 
         # ROSパラメータ登録
         self.timespan = 0.5
@@ -106,6 +107,7 @@ class DataCapture(Node):
         if not os.path.isdir(self.path):
             os.mkdir(self.path)
         self.file = open(os.path.join(self.path, 'data.csv'), 'w')
+        self.file.close()
 
     def parameters_cb(self, params):        
         for param in params:
@@ -134,8 +136,10 @@ class DataCapture(Node):
         response.success = True
         if request.data:
             self.record_flag = True
+            self.file = open(os.path.join(self.path, 'data.csv'), 'a')
             response.message = "record start"
         else:
+            self.file.close()
             self.record_flag = False
             response.message = "record end"
 
