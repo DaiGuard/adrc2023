@@ -149,7 +149,7 @@ class LiveRun(Node):
                 break
 
             image = pyds.get_nvds_buf_surface(hash(gst_buffer), frame_meta.batch_id)
-            image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+            image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
             input_tensor = self.transform(image)            
             input_batch = input_tensor.unsqueeze(0)
             output = self.model(input_batch.to(self.device))
