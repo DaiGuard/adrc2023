@@ -176,10 +176,10 @@ class LiveRun(Node):
             cmd_vel.angular.y = 0.0
             if math.fabs(float(output[0][1])) > 0.5:
                 cmd_vel.angular.z = 0.5 * float(output[0][1]) / math.fabs(float(output[0][1]))
-            elif math.fabs(float(output[0][1])) > 0.2:
+            elif math.fabs(float(output[0][1])) > 0.35:
                 cmd_vel.angular.z = 0.35 * float(output[0][1]) / math.fabs(float(output[0][1]))
             elif math.fabs(float(output[0][1])) > 0.1:
-                cmd_vel.angular.z = 0.2 * float(output[0][1]) / math.fabs(float(output[0][1]))
+                cmd_vel.angular.z = 0.1 * float(output[0][1]) / math.fabs(float(output[0][1]))
             else:
                 cmd_vel.angular.z = float(output[0][1])
             self.cmdvel_pub.publish(cmd_vel)
