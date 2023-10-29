@@ -39,10 +39,12 @@ class LiveRun(Node):
 
         # Gstreamerランチャの宣言
         launch_str = "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! m.sink_0 "
-        launch_str+= "nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! nvvideoconvert flip-method=rotate-180 ! m.sink_1 "
-        launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=2 num-surfaces-per-frame=1 "
-        launch_str+= "! nvmultistreamtiler columns=1 rows=2 width=1280 height=1440 "
-        launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! fakesink name=sink sync=false "
+        # launch_str+= "nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! nvvideoconvert flip-method=rotate-180 ! m.sink_1 "
+        launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=1 num-surfaces-per-frame=1 "
+        # launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=2 num-surfaces-per-frame=1 "
+        launch_str+= "! nvmultistreamtiler columns=1 rows=1 width=1280 height=720 "
+        # launch_str+= "! nvmultistreamtiler columns=1 rows=2 width=1280 height=1440 "
+        launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=360,format=RGBA ! fakesink name=sink sync=false "
         #launch_str+= "! nvvideoconvert ! video/x-raw(memory:NVMM),width=640,height=720,format=RGBA ! tee name=t ! queue ! fakesink name=sink sync=false "
         # launch_str+= "t.src_1 ! queue ! nvvidconv ! video/x-raw,width=640,height=720 ! jpegenc ! rtpjpegpay ! udpsink host=192.168.3.103 port=8554 sync=false"
         self.pipeline = Gst.parse_launch(launch_str)
@@ -150,6 +152,7 @@ class LiveRun(Node):
 
             image = pyds.get_nvds_buf_surface(hash(gst_buffer), frame_meta.batch_id)
             image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
+            image = cv2.rectangle(image, (150, 260), (490, 360), (0, 0, 0), thickness=-1)
             input_tensor = self.transform(image)            
             input_batch = input_tensor.unsqueeze(0)
             output = self.model(input_batch.to(self.device))

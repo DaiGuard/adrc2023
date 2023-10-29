@@ -33,7 +33,6 @@ if __name__ == '__main__':
         if current_id != id:
             id = current_id
             image = cv2.imread(os.path.join(args[1], dataset[id][0]))
-
             image = cv2.rectangle(image, (150, 260), (490, 360), (0, 0, 0), thickness=-1)
 
         v_val = float(dataset[id][1])
