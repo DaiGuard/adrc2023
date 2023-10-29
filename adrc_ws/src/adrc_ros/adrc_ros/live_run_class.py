@@ -38,9 +38,9 @@ class LiveRun(Node):
         Gst.init(None)
 
         # Gstreamerランチャの宣言
-        launch_str = "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! m.sink_0 "
+        launch_str = "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=15/1 ! m.sink_0 "
         # launch_str+= "nvarguscamerasrc sensor-id=1 ! video/x-raw(memory:NVMM),fromat=NV12,width=1280,height=720,framerate=60/1 ! nvvideoconvert flip-method=rotate-180 ! m.sink_1 "
-        launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=1 num-surfaces-per-frame=1 "
+        launch_str+= "nvstreammux name=m width=1280 height=720 batch-size=1 num-surfaces-per-frame=1 "
         # launch_str+= "nvstreammux name=m width=1280 height=1440 batch-size=2 num-surfaces-per-frame=1 "
         launch_str+= "! nvmultistreamtiler columns=1 rows=1 width=1280 height=720 "
         # launch_str+= "! nvmultistreamtiler columns=1 rows=2 width=1280 height=1440 "
@@ -158,20 +158,30 @@ class LiveRun(Node):
             output = self.model(input_batch.to(self.device))
             output = output.to('cpu')
 
-            u = int(image.shape[1] / 2.0 * (1.0 - output[0][1]))
-            v = int(image.shape[0] / 2.0 * (1.0 - output[0][0]))
-            image = cv2.circle(image, (u, v), 10, (255,0,0), thickness=-1)
+            # u = int(image.shape[1] / 2.0 * (1.0 - output[0][1]))
+            # v = int(image.shape[0] / 2.0 * (1.0 - output[0][0]))
+            # image = cv2.circle(image, (u, v), 10, (255,0,0), thickness=-1)
 
-            imgmsg = self.bridge.cv2_to_compressed_imgmsg(image)
-            self.preview_img_pub.publish(imgmsg)
+            # imgmsg = self.bridge.cv2_to_compressed_imgmsg(image)
+            # self.preview_img_pub.publish(imgmsg)
 
             cmd_vel = Twist()
-            cmd_vel.linear.x = float(output[0][0])
+            if float(output[0][0]) > 0.8:
+                cmd_vel.linear.x = 0.8
+            else:
+                cmd_vel.linear.x = float(output[0][0])
             cmd_vel.linear.y = 0.0
             cmd_vel.linear.z = 0.0
             cmd_vel.angular.x = 0.0
             cmd_vel.angular.y = 0.0
-            cmd_vel.angular.z = float(output[0][1])
+            if math.fabs(float(output[0][1])) > 0.5:
+                cmd_vel.angular.z = 0.5 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            elif math.fabs(float(output[0][1])) > 0.2:
+                cmd_vel.angular.z = 0.35 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            elif math.fabs(float(output[0][1])) > 0.1:
+                cmd_vel.angular.z = 0.2 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            else:
+                cmd_vel.angular.z = float(output[0][1])
             self.cmdvel_pub.publish(cmd_vel)
 
             try:
