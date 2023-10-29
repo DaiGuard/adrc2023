@@ -6,7 +6,7 @@ if [ $# -gt 0 ]; then
         echo -e "Usage:"
         echo -e "  ./robot_sync.sh OPTIONS"
         echo -e ""
-        echo -e "  OPTIONS: esp32,ros,data"
+        echo -e "  OPTIONS: esp32,ros,data,models,tools"
         exit
     fi
 
