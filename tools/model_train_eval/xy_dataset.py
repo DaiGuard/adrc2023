@@ -5,7 +5,8 @@ from torchvision.io import read_image
 
 import cv2
 import PIL.Image
-
+import copy
+import random
 
 class XYDataset(Dataset):
 
@@ -19,11 +20,12 @@ class XYDataset(Dataset):
             with open(data_file, 'r') as f:
                 for line in f:
                     d = line.replace(' ', '').split(',')
-                    dataset.append({
-                        'file': os.path.join(path, d[0]),
-                        'throttle': float(d[1]), 
-                        'steering': float(d[2])
-                        })
+                    if int(d[6]) > 0:
+                        dataset.append({
+                            'file': os.path.join(path, d[0]),
+                            'throttle': float(d[1]), 
+                            'steering': float(d[2])
+                            })
 
         self.dataset = dataset
 
@@ -52,5 +54,44 @@ class XYDataset(Dataset):
 
         return image, (throttle, steering)
 
+    def getSample(self, ratio):
 
+        temp1 = copy.deepcopy(self)
+        temp2 = copy.deepcopy(self)
+
+        num = len(self.dataset)
+        random_id = random.sample(range(num), int(num*ratio))
+
+        temp1_array = []
+        temp2_array = []
+
+        for i in range(num):
+            if i in random_id:
+                temp1_array.append(self.dataset[i])
+            else:
+                temp2_array.append(self.dataset[i])
+
+        temp1.dataset = temp1_array
+        temp2.dataset = temp2_array
+
+        return temp1, temp2
     
+
+import torchvision.transforms as transforms
+
+if __name__ == '__main__':
+
+    TRANSFORMS = transforms.Compose([
+        transforms.ToPILImage(),
+        transforms.ColorJitter(0.2, 0.2, 0.2, 0.2),
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    dataset = XYDataset(['data/1030_09/'], TRANSFORMS)
+
+    train_dataset, eval_dataset = dataset.getSample(0.8)
+
+    print(len(dataset), len(train_dataset), len(eval_dataset))
+

@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--data', '-d', action='append', required=True, type=str)
     parser.add_argument('--epoch', '-e', default=100, type=int)
     parser.add_argument('--batch', '-b', default=8, type=int)
+    parser.add_argument('--ratio', '-r', default=0.8, type=float)
     args = parser.parse_args()
 
     device = torch.device('cuda')
@@ -48,8 +49,13 @@ if __name__ == '__main__':
     dataset = XYDataset(args.data, TRANSFORMS)
     epoch = args.epoch    
     batch_size = args.batch
+    ratio = args.ratio
 
-    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)    
+    train_dataset, eval_dataset = dataset.getSample(ratio)
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)    
+
+    print(f'{len(dataset)}: {len(train_dataset)}/{len(eval_dataset)}')
 
     while epoch > 0:
         count = 0
@@ -79,14 +85,14 @@ if __name__ == '__main__':
     model = model.eval()
 
     cv2.namedWindow('data_view', cv2.WINDOW_NORMAL)
-    cv2.createTrackbar('ID', 'data_view', 0, len(dataset)-1, lambda val: print(val))
+    cv2.createTrackbar('ID', 'data_view', 0, len(eval_dataset)-1, lambda val: {})
 
     id = -1
     while True:
         current_id = cv2.getTrackbarPos('ID', 'data_view')
         if current_id != id:
             id = current_id
-            res_image, res_xy = dataset.getData(id)
+            res_image, res_xy = eval_dataset.getData(id)
 
             image, xy = dataset[id]
             image = image.unsqueeze(dim=0)
@@ -109,9 +115,9 @@ if __name__ == '__main__':
         res_image = cv2.circle(res_image, (out_u, out_v), 10, (0, 0, 255), thickness=-1)
 
         cv2.imshow('data_view', res_image)
-        key = cv2.waitKey(30)
-        print(key)
+        key = cv2.waitKey(30)        
         if key == 115:
+            print(f'model save: {args.output}')
             torch.save(model, args.output)
             break
         elif key == 113:

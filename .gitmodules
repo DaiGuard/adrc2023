@@ -4,3 +4,6 @@
 [submodule "adrc_ws/src/vision_opencv"]
 	path = adrc_ws/src/vision_opencv
 	url = https://github.com/ros-perception/vision_opencv.git
+[submodule "adrc_ws/src/ydlidar"]
+	path = adrc_ws/src/ydlidar
+	url = https://github.com/EAIBOT/ydlidar
