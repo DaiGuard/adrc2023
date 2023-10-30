@@ -39,6 +39,9 @@ class XYDataset(Dataset):
         steering = self.dataset[index]['steering']
         
         image = cv2.imread(image_path)
+        ######
+        image = cv2.rectangle(image, (0, 0), (640, 130), (0, 0, 0), thickness=-1)
+        ######
         image = cv2.rectangle(image, (150, 260), (490, 360), (0, 0, 0), thickness=-1)
 
         if self.transform:

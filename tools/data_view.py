@@ -47,6 +47,7 @@ if __name__ == '__main__':
                 image = cv2.imread(os.path.join(args[1], dataset[id][0]))
             
             preview = image.copy()
+            preview = cv2.rectangle(preview, (0, 0), (640, 130), (0, 0, 0), thickness=-1)
             preview = cv2.rectangle(preview, (150, 260), (490, 360), (0, 0, 0), thickness=-1)
             if int(dataset[id][6]) > 0:
                 cv2.putText(preview, 'Enable', (10, 20), 

@@ -152,6 +152,9 @@ class LiveRun(Node):
 
             image = pyds.get_nvds_buf_surface(hash(gst_buffer), frame_meta.batch_id)
             image = cv2.cvtColor(image, cv2.COLOR_RGBA2BGR)
+            ######
+            image = cv2.rectangle(image, (0, 0), (640, 130), (0, 0, 0), thickness=-1)
+            ######
             image = cv2.rectangle(image, (150, 260), (490, 360), (0, 0, 0), thickness=-1)
             input_tensor = self.transform(image)            
             input_batch = input_tensor.unsqueeze(0)
@@ -166,22 +169,39 @@ class LiveRun(Node):
             # self.preview_img_pub.publish(imgmsg)
 
             cmd_vel = Twist()
-            if float(output[0][0]) > 0.8:
-                cmd_vel.linear.x = 0.8
+            max_throttle = 1.2
+            min_throttle = 0.6
+            throttle = 0.0
+            steer = float(output[0][1])
+            if math.fabs(output[0][1]) > 0.5:
+                steer = 0.5 *  steer / math.fabs(steer)
             else:
-                cmd_vel.linear.x = float(output[0][0])
+                steer = steer
+
+            throttle = (max_throttle - min_throttle) * (1.0 - math.fabs(steer)) / 0.5 + min_throttle
+            cmd_vel.linear.y = throttle
             cmd_vel.linear.y = 0.0
             cmd_vel.linear.z = 0.0
             cmd_vel.angular.x = 0.0
             cmd_vel.angular.y = 0.0
-            if math.fabs(float(output[0][1])) > 0.5:
-                cmd_vel.angular.z = 0.5 * float(output[0][1]) / math.fabs(float(output[0][1]))
-            elif math.fabs(float(output[0][1])) > 0.35:
-                cmd_vel.angular.z = 0.35 * float(output[0][1]) / math.fabs(float(output[0][1]))
-            elif math.fabs(float(output[0][1])) > 0.1:
-                cmd_vel.angular.z = 0.1 * float(output[0][1]) / math.fabs(float(output[0][1]))
-            else:
-                cmd_vel.angular.z = float(output[0][1])
+            cmd_vel.angular.z = steer
+
+            # if float(output[0][0]) > 0.8:
+            #     cmd_vel.linear.x = 0.8
+            # else:
+            #     cmd_vel.linear.x = float(output[0][0])
+            # cmd_vel.linear.y = 0.0
+            # cmd_vel.linear.z = 0.0
+            # cmd_vel.angular.x = 0.0
+            # cmd_vel.angular.y = 0.0
+            # if math.fabs(float(output[0][1])) > 0.5:
+            #     cmd_vel.angular.z = 0.5 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            # elif math.fabs(float(output[0][1])) > 0.35:
+            #     cmd_vel.angular.z = 0.35 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            # elif math.fabs(float(output[0][1])) > 0.1:
+            #     cmd_vel.angular.z = 0.1 * float(output[0][1]) / math.fabs(float(output[0][1]))
+            # else:
+            #     cmd_vel.angular.z = float(output[0][1])
             self.cmdvel_pub.publish(cmd_vel)
 
             try:
