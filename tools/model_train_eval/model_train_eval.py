@@ -28,7 +28,8 @@ if __name__ == '__main__':
     model = None
     if not args.input:
         model = torchvision.models.resnet18(pretrained=False)
-        model.fc = torch.nn.Linear(512, 2)
+        # model.fc = torch.nn.Linear(512, 2)
+        model.fc = torch.nn.Linear(512, 1)
     else:
         model = torch.load(args.input)
     model = model.to(device)

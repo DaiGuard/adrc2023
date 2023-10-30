@@ -55,7 +55,8 @@ class XYDataset(Dataset):
         steering = self.dataset[index]['steering']        
         image = cv2.imread(image_path)
 
-        return image, (throttle, steering)
+        # return image, (throttle, steering)
+        return image, (steering)
 
     def getSample(self, ratio):
 
