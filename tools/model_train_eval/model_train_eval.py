@@ -85,12 +85,13 @@ if __name__ == '__main__':
     # 評価
     model = model.eval()
 
-    cv2.namedWindow('data_view', cv2.WINDOW_NORMAL)
-    cv2.createTrackbar('ID', 'data_view', 0, len(eval_dataset)-1, lambda val: {})
+    winname = 'data_view_1'
+    cv2.namedWindow(winname, cv2.WINDOW_NORMAL)
+    cv2.createTrackbar('ID', winname, 0, len(eval_dataset)-1, lambda val: {})
 
     id = -1
     while True:
-        current_id = cv2.getTrackbarPos('ID', 'data_view')
+        current_id = cv2.getTrackbarPos('ID', winname)
         if current_id != id:
             id = current_id
             res_image, res_xy = eval_dataset.getData(id)
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
         res_image = cv2.circle(res_image, (out_u, out_v), 10, (0, 0, 255), thickness=-1)
 
-        cv2.imshow('data_view', res_image)
+        cv2.imshow(winname, res_image)
         key = cv2.waitKey(30)        
         if key == 115:
             print(f'model save: {args.output}')

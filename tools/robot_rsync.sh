@@ -39,7 +39,7 @@ if [[ "$MODE" == *ros* ]]; then
     rsync -rv --exclude=".git" --exclude=".vscode" --delete \
         $WORKDIR/adrc_ws/src \
         $USERNAME@$TARGETNAME:$TARGETDIR/adrc_ws/
-    ssh $USERNAME@$TARGETNAME "cd $TARGETDIR/adrc_ws/ && source /opt/ros/foxy/setup.bash && colcon build --symlink-install"
+    ssh $USERNAME@$TARGETNAME "cd $TARGETDIR/adrc_ws/ && source /opt/ros/foxy/setup.bash && colcon build --symlink-install --continue-on-error"
 fi
 
 if [[ "$MODE" == *scripts* ]]; then
