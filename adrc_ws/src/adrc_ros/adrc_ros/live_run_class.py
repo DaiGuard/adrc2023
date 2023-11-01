@@ -172,17 +172,15 @@ class LiveRun(Node):
             max_throttle = 1.2
             min_throttle = 0.6
             throttle = 0.0
-            if len(output[0]) == 2:
-                steer = float(output[0][1])
-            else:
-                steer = float(output[0][0])
-                
+            steer = float(output[0][1])
+            # steer = float(output[0])
+
             if math.fabs(steer) > 0.5:
                 steer = 0.5 *  steer / math.fabs(steer)
             else:
                 steer = steer
 
-            throttle = (max_throttle - min_throttle) * (1.0 - math.fabs(steer)) / 0.5 + min_throttle
+            throttle = (max_throttle - min_throttle) * (1.0 - math.fabs(steer) / 0.5) + min_throttle
             cmd_vel.linear.y = throttle
             cmd_vel.linear.y = 0.0
             cmd_vel.linear.z = 0.0

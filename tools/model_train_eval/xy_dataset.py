@@ -47,7 +47,8 @@ class XYDataset(Dataset):
         if self.transform:
             image = self.transform(image)
 
-        return image, Tensor([throttle, steering])
+        # return image, Tensor([throttle, steering])
+        return image, Tensor([steering])
     
     def getData(self, index):
         image_path = self.dataset[index]['file']
@@ -55,8 +56,7 @@ class XYDataset(Dataset):
         steering = self.dataset[index]['steering']        
         image = cv2.imread(image_path)
 
-        # return image, (throttle, steering)
-        return image, (steering)
+        return image, (throttle, steering)
 
     def getSample(self, ratio):
 

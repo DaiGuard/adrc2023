@@ -67,8 +67,8 @@ if __name__ == '__main__':
 
             optimizer.zero_grad()
 
-            outputs = model(images)
-            
+            outputs = model(images)            
+
             loss = 0.0
             for i in range(len(images)):
                 loss += torch.mean((outputs[i] - xy[i])**2)
@@ -103,19 +103,22 @@ if __name__ == '__main__':
             output = output.to('cpu')
 
         v_val = float(res_xy[0])
-        u_val = float(res_xy[1])
-        v = int((1.0 - v_val) * res_image.shape[0] / 2.0)
-        u = int((1.0 - u_val) * res_image.shape[1] / 2.0)
+        u_val = float(res_xy[1])        
 
+        # v = int((1.0 - v_val) * res_image.shape[0] / 2.0)
+        v = int(res_image.shape[0] / 2.0)
+        u = int((1.0 - u_val) * res_image.shape[1] / 2.0)
+        
         res_image = cv2.circle(res_image, (u, v), 10, (255, 0, 0), thickness=-1)
 
-        out_v_val = output[0][0]
-        out_u_val = output[0][1]
-        out_v = int((1.0 - out_v_val) * res_image.shape[0] / 2.0)
+        # out_v_val = output[0][0]
+        # out_u_val = output[0][1]
+        out_u_val = output[0]
+        # out_v = int((1.0 - out_v_val) * res_image.shape[0] / 2.0)
+        out_v = int(res_image.shape[0] / 2.0)
         out_u = int((1.0 - out_u_val) * res_image.shape[1] / 2.0)
 
-        res_image = cv2.circle(res_image, (out_u, out_v), 10, (0, 0, 255), thickness=-1)
-
+        res_image = cv2.circle(res_image, (out_u, out_v), 10, (0, 0, 255), thickness=-1)        
         cv2.imshow(winname, res_image)
         key = cv2.waitKey(30)        
         if key == 115:
