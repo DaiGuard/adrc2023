@@ -169,11 +169,11 @@ class LiveRun(Node):
             # self.preview_img_pub.publish(imgmsg)
 
             cmd_vel = Twist()
-            max_throttle = 1.2
-            min_throttle = 0.6
+            max_throttle = 0.09
+            min_throttle = 0.06
             throttle = 0.0
-            steer = float(output[0][1])
-            # steer = float(output[0])
+            # steer = float(output[0][1])
+            steer = float(output[0])
 
             if math.fabs(steer) > 0.5:
                 steer = 0.5 *  steer / math.fabs(steer)
@@ -181,7 +181,7 @@ class LiveRun(Node):
                 steer = steer
 
             throttle = (max_throttle - min_throttle) * (1.0 - math.fabs(steer) / 0.5) + min_throttle
-            cmd_vel.linear.y = throttle
+            cmd_vel.linear.x = throttle
             cmd_vel.linear.y = 0.0
             cmd_vel.linear.z = 0.0
             cmd_vel.angular.x = 0.0
